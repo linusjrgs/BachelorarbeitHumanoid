@@ -1,15 +1,28 @@
-# =========================
-# main.py – Humanoid‑Walk Training (tag‑basiert, saubere Prints)
-# =========================
-"""Trainings‑Entry‑Point für den *Walking‑only*‑Humanoid.
-
-Änderungen vs. vorheriger Canvas‑Stand:
-──────────────────────────────────────
-* CLI‑Argument --tag          → ordentliche TensorBoard‑Ordner
-* STEPS_PER_EPOCH = 2048      → mehr Samples / Update
-* VIDEO_FPS = 60              → flüssigere MP4s
-* Print‑Zeile exakt wie im alten Skript (inkl. KL, VF, Stdπ …)
 """
+Trainings-Skript für den Walking-Only-Humanoid (Proximal Policy Optimization).
+
+Dieses Skript dient als zentraler Einstiegspunkt zum Trainieren eines PPO-Agenten
+auf einer angepassten Humanoid-Umgebung, die auf symmetrisches, natürliches
+Gangverhalten optimiert wurde.
+
+Merkmale:
+- CLI-Argument --tag → eigene TensorBoard-Ordner pro Run (für Vergleichbarkeit)
+- STEPS_PER_EPOCH = 2048 → stabileres Update durch mehr Samples pro Policy-Update
+- VIDEO_FPS = 60 → flüssige Videos zur qualitativen Evaluation
+- Logging in TensorBoard & CSV → quantitative Nachvollziehbarkeit
+- Regelmäßiges Speichern von Checkpoints → Wiederaufnahme und Analyse möglich
+- Automatische Videoaufzeichnung bei vordefinierten Epochen → Fortschritt visualisieren
+
+Trainingsablauf:
+- Trainingsdaten werden parallel in NUM_ENVS Umgebungen gesammelt (AsyncVectorEnv)
+- Training erfolgt über EPOCHS Schleifen → 1 PPO-Update pro EPOCH
+- Nach jeweils EVAL_INTERVAL Epochen erfolgt eine Evaluation der aktuellen Policy im Einzelmodus
+- Policy-Verbesserungen und Lernfortschritte werden zusätzlich in Videos sichtbar gemacht
+
+Ziel:
+- Entwicklung eines stabilen, symmetrischen und natürlichen Gangs für den Humanoid-Agenten.
+"""
+
 from __future__ import annotations
 import argparse, datetime, os
 import imageio, matplotlib.pyplot as plt, numpy as np, pandas as pd, torch
@@ -27,9 +40,9 @@ ARGS = PARSER.parse_args()
 
 # ────────────────────────── HYPER‑PARAMS ─────────────────────────
 NUM_ENVS        = 16
-EPOCHS          = 6000
+EPOCHS          = 20000
 STEPS_PER_EPOCH = 2048   # vorher 1024
-VIDEO_EPOCHS    = VIDEO_EPOCHS = {50, 100, 180, 260, 350, 420, 430, 499, 600, 700, 900, 1000, 2000, 3000, 3500, 5000, 5500, 5999}
+VIDEO_EPOCHS    = VIDEO_EPOCHS = {50, 100, 180, 260, 350, 420, 430, 499, 600, 700, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 23000, 25000, 27000, 28000, 29000, 29999}
 VIDEO_FPS       = 60
 SEED = ARGS.seed if ARGS.seed is not None else np.random.randint(0, 10_000)
 # ───────────────────── Helper ─────────────────────

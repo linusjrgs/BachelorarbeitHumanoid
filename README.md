@@ -18,6 +18,7 @@ Durch gezielte Modifikationen an der Reward-Struktur (Symmetrie-Bonus, Anti-Hopp
 
 ## Verwendung
 ![Beispiel GIF](./Kurzesvideo.gif)
+https://youtube.com/shorts/yQRjeEFj1OA?feature=share
 ### Voraussetzungen
 
 - Python 3.10+

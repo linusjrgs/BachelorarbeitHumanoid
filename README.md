@@ -7,22 +7,20 @@ This project was my introduction to **Reinforcement Learning** and investigated 
 
 The work was conducted as part of my Bachelor's thesis at **Hochschule München** using the `Humanoid-v5` environment from **Gymnasium** and **MuJoCo**.
 
-The main focus was not only on implementing PPO, but on investigating how **reward design influences the behavior learned by the agent**.
+The main focus was on investigating how **reward design influences the behavior learned by the agent**.
 
 ---
 
 ## Overview
 
-The project uses a modified `Humanoid-v5` environment in which additional reward components were introduced to encourage specific locomotion characteristics.
+The original `Humanoid-v5` environment was extended with additional reward components to investigate:
 
-The experiments investigated whether reward shaping could promote:
+- forward locomotion
+- movement symmetry
+- reduced hopping and jumping
+- body stabilization
 
-- more symmetric locomotion
-- reduced hopping and jumping behavior
-- improved body stabilization
-- forward movement
-
-The complete learning pipeline was implemented and evaluated using a custom PPO agent.
+A custom PPO agent with separate policy and value networks was implemented and evaluated.
 
 ---
 
@@ -36,15 +34,7 @@ Instead, the agent converged to a short **stepping / "tippling" behavior**.
 
 ![Learned Humanoid locomotion](./Kurzesvideo.gif)
 
-This result was an important part of the project: it demonstrated that a reinforcement learning agent can find a locally effective movement strategy that satisfies parts of the reward objective without necessarily producing the desired human-like behavior.
-
-### Key observation
-
-The experiments highlighted the strong influence of **reward engineering** on the resulting policy.
-
-A reward function can successfully optimize the defined objective while still leading to an unintuitive or undesired strategy.
-
-This was one of the main lessons of the project and motivated further interest in how learning algorithms interact with system design and optimization objectives.
+This result demonstrated how strongly the learned behavior depends on the design and weighting of the reward function. The agent found a locally effective movement strategy that did not fully correspond to the intended behavior.
 
 ---
 
@@ -52,14 +42,12 @@ This was one of the main lessons of the project and motivated further interest i
 
 ### Reinforcement Learning
 
-The agent uses **Proximal Policy Optimization (PPO)**.
-
-Two neural networks are used:
+The agent uses **Proximal Policy Optimization (PPO)** with separate neural networks for:
 
 - **Policy Network** – predicts the actions of the humanoid
 - **Value Network** – estimates the expected future return
 
-The PPO implementation includes, among other components:
+The PPO implementation includes:
 
 - clipped policy updates
 - advantage estimation
@@ -68,13 +56,9 @@ The PPO implementation includes, among other components:
 - gradient clipping
 - observation normalization
 
----
-
 ### Custom Humanoid Environment
 
-The original `Humanoid-v5` environment was extended with additional reward components.
-
-The reward design investigated several aspects of the learned movement:
+The original `Humanoid-v5` environment was extended with additional reward components:
 
 | Reward component | Purpose |
 |---|---|
@@ -83,41 +67,23 @@ The reward design investigated several aspects of the learned movement:
 | Anti-hopping | Penalize undesired jumping / hopping |
 | Body stabilization | Encourage a more stable posture |
 
-The goal was to guide the learning process toward a stable and more symmetric locomotion strategy.
-
 ---
 
-## Reward Engineering
+## Key Takeaways
 
-One of the central parts of the project was the design and evaluation of additional reward terms.
+This project was my first practical experience with **Reinforcement Learning**. At the beginning of the project, my practical RL knowledge was mainly based on theoretical concepts and online lectures, so implementing and training a complete PPO agent was a significant learning process.
 
-The underlying idea was that the agent does not directly know what "natural walking" means. It only optimizes the objective defined by the reward function.
+One of the main challenges was **reward engineering**. I learned that designing a reward function for complex behaviors such as humanoid locomotion is difficult, as different reward components can interact in unexpected ways and lead to behaviors that differ from the original intention.
 
-Therefore, seemingly reasonable reward components can interact in unexpected ways.
+Another major limitation was **computational resources**. Training the humanoid agent required substantial computational time, and some experiments took several days to complete. Limited hardware therefore restricted the number of experiments and iterations that could realistically be performed.
 
-The experiments showed that the learned policy can exploit these objectives and converge to a movement strategy that is effective according to the reward function, but does not necessarily correspond to the intended behavior.
+The project gave me practical experience with:
 
-This provided practical insight into one of the central challenges of reinforcement learning:
-
-> **The quality of the learned behavior is strongly influenced by how the objective is formulated.**
-
----
-
-## Training Pipeline
-
-The training pipeline was implemented in Python and includes:
-
-1. Environment initialization
-2. Observation normalization
-3. Action selection using the policy network
-4. Rollout collection
-5. Advantage estimation
-6. PPO optimization
-7. Value-function updates
-8. Gradient clipping
-9. Training monitoring and evaluation
-
-The implementation was designed to allow experiments with different reward configurations and training parameters.
+- Reinforcement Learning and PPO
+- Reward engineering and iterative experimentation
+- Simulated robot control
+- Training and evaluating neural networks
+- Understanding the impact of computational resources on machine learning experiments
 
 ---
 
@@ -125,7 +91,6 @@ The implementation was designed to allow experiments with different reward confi
 
 ```text
 BachelorarbeitHumanoid/
-│
 ├── README.md
 ├── main.py
 ├── env.py

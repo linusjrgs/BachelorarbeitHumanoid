@@ -1,103 +1,137 @@
-# PPO-Agent für Gangverhalten in Humanoid-v5
+# PPO Agent for Humanoid Locomotion
 
-## Projektübersicht
+**Bachelor Thesis · Hochschule München · 2025**  
+**Focus:** Reinforcement Learning · PPO · Reward Engineering · Robot Locomotion · MuJoCo
 
-Dieses Projekt untersucht den Einsatz von Proximal Policy Optimization (PPO)
-für das Erlernen von Gangverhalten in einer angepassten
-`Humanoid-v5`-Umgebung auf Basis von Gymnasium und MuJoCo.
+This project was my introduction to **Reinforcement Learning** and investigated how a humanoid robot can learn locomotion using **Proximal Policy Optimization (PPO)**.
 
-Im Mittelpunkt steht die Frage, inwiefern sich durch gezielte Anpassungen der
-Reward-Funktion bestimmte Eigenschaften des Bewegungsverhaltens fördern lassen.
-Dazu wurden unter anderem Belohnungs- und Strafkomponenten für symmetrisches
-Verhalten, unerwünschte Sprungbewegungen und die Stabilisierung der
-Körperhaltung untersucht.
+The work was conducted as part of my Bachelor's thesis at **Hochschule München** using the `Humanoid-v5` environment from **Gymnasium** and **MuJoCo**.
 
-Die entwickelte Umgebung und der PPO-Agent wurden anschließend anhand des
-erlernten Bewegungsverhaltens und verschiedener Trainingsmetriken evaluiert.
+The main focus was not only on implementing PPO, but on investigating how **reward design influences the behavior learned by the agent**.
 
-## Zielsetzung
+---
 
-- Implementierung eines PPO-Agenten für die Humanoid-v5-Umgebung
-- Untersuchung des Einflusses verschiedener Reward-Komponenten auf das
-  Bewegungsverhalten
-- Förderung eines symmetrischeren und stabileren Bewegungsmusters
-- Quantitative Auswertung des Trainingsverlaufs
-- Qualitative Bewertung des resultierenden Bewegungsverhaltens
+## Overview
 
-## Ergebnis
+The project uses a modified `Humanoid-v5` environment in which additional reward components were introduced to encourage specific locomotion characteristics.
 
-Die Experimente zeigten, dass der Agent ein Bewegungsmuster erlernen konnte,
-das grundsätzlich eine Vorwärtsbewegung des Humanoiden ermöglicht.
+The experiments investigated whether reward shaping could promote:
 
-Das resultierende Verhalten entsprach jedoch nicht dem ursprünglich angestrebten
-natürlichen menschlichen Gang. Statt eines ausgeprägten, alternierenden
-Gehzyklus entwickelte die Policy überwiegend ein kurzes, tippelndes
-Bewegungsmuster.
+- more symmetric locomotion
+- reduced hopping and jumping behavior
+- improved body stabilization
+- forward movement
 
-Damit konnte das ursprüngliche Ziel eines natürlichen und robusten
-Gangverhaltens nicht vollständig erreicht werden.
+The complete learning pipeline was implemented and evaluated using a custom PPO agent.
 
-Die Ergebnisse zeigen gleichzeitig die Herausforderungen beim Reward Design
-für komplexe humanoide Bewegungsaufgaben. Insbesondere die Gewichtung der
-verschiedenen Reward-Komponenten beeinflusst das erlernte Verhalten stark und
-kann dazu führen, dass der Agent eine lokal vorteilhafte, aber nicht
-menschlich anmutende Bewegungsstrategie entwickelt.
+---
 
-## Beispiel
+## Result
 
-![Beispiel GIF](./Kurzesvideo.gif)
+The trained agent successfully learned a behavior that enabled **forward locomotion**.
 
-[Video auf YouTube](https://youtube.com/shorts/yQRjeEFj1OA?feature=share)
+However, the resulting policy did **not** develop the natural human-like walking pattern that was originally intended.
 
-## Technischer Ansatz
+Instead, the agent converged to a short **stepping / "tippling" behavior**.
+
+![Learned Humanoid locomotion](./Kurzesvideo.gif)
+
+This result was an important part of the project: it demonstrated that a reinforcement learning agent can find a locally effective movement strategy that satisfies parts of the reward objective without necessarily producing the desired human-like behavior.
+
+### Key observation
+
+The experiments highlighted the strong influence of **reward engineering** on the resulting policy.
+
+A reward function can successfully optimize the defined objective while still leading to an unintuitive or undesired strategy.
+
+This was one of the main lessons of the project and motivated further interest in how learning algorithms interact with system design and optimization objectives.
+
+---
+
+## Technical Approach
 
 ### Reinforcement Learning
 
-Als Lernverfahren wird Proximal Policy Optimization (PPO) verwendet.
+The agent uses **Proximal Policy Optimization (PPO)**.
 
-Der Agent besteht aus separaten neuronalen Netzen für:
+Two neural networks are used:
 
-- Policy
-- Value Function
+- **Policy Network** – predicts the actions of the humanoid
+- **Value Network** – estimates the expected future return
 
-Die Policy bestimmt die Aktionen des Humanoiden, während das Value Network
-den erwarteten zukünftigen Return schätzt.
+The PPO implementation includes, among other components:
 
-### Angepasste Humanoid-Umgebung
+- clipped policy updates
+- advantage estimation
+- entropy regularization
+- value loss
+- gradient clipping
+- observation normalization
 
-Die originale Humanoid-v5-Umgebung wurde um zusätzliche Reward-Komponenten
-erweitert.
+---
 
-Dabei wurden unter anderem folgende Aspekte untersucht:
+### Custom Humanoid Environment
 
-- Symmetrie des Bewegungsverhaltens
-- Bestrafung unerwünschter Sprung-/Hüpfbewegungen
-- Stabilisierung der Körperhaltung
-- Vorwärtsbewegung
+The original `Humanoid-v5` environment was extended with additional reward components.
 
-Das Ziel war es, den Lernprozess gezielt in Richtung eines stabileren und
-symmetrischeren Gangverhaltens zu beeinflussen.
+The reward design investigated several aspects of the learned movement:
 
-## Projektstruktur
+| Reward component | Purpose |
+|---|---|
+| Forward movement | Encourage locomotion |
+| Symmetry | Encourage more balanced movement |
+| Anti-hopping | Penalize undesired jumping / hopping |
+| Body stabilization | Encourage a more stable posture |
+
+The goal was to guide the learning process toward a stable and more symmetric locomotion strategy.
+
+---
+
+## Reward Engineering
+
+One of the central parts of the project was the design and evaluation of additional reward terms.
+
+The underlying idea was that the agent does not directly know what "natural walking" means. It only optimizes the objective defined by the reward function.
+
+Therefore, seemingly reasonable reward components can interact in unexpected ways.
+
+The experiments showed that the learned policy can exploit these objectives and converge to a movement strategy that is effective according to the reward function, but does not necessarily correspond to the intended behavior.
+
+This provided practical insight into one of the central challenges of reinforcement learning:
+
+> **The quality of the learned behavior is strongly influenced by how the objective is formulated.**
+
+---
+
+## Training Pipeline
+
+The training pipeline was implemented in Python and includes:
+
+1. Environment initialization
+2. Observation normalization
+3. Action selection using the policy network
+4. Rollout collection
+5. Advantage estimation
+6. PPO optimization
+7. Value-function updates
+8. Gradient clipping
+9. Training monitoring and evaluation
+
+The implementation was designed to allow experiments with different reward configurations and training parameters.
+
+---
+
+## Project Structure
 
 ```text
-env.py         → modifizierte Humanoid-Umgebung
-                 (Symmetrie + Anti-Hopping + Stabilisierung)
-
-ppo.py         → PPO-Agent
-                 (Policy, Value Network und Update-Loop)
-
-mlp.py         → MLP-Module für Policy und Value Network
-
-utils.py       → Hilfsfunktionen
-                 (RunningNorm, explained_variance, etc.)
-
-main.py        → Trainingsskript und vollständiger Training Loop
-
-videos/        → gerenderte MP4-Videos und GIFs
-
-logs/          → Trainings-Logs (CSV + TensorBoard)
-
-plots/         → während des Trainings erzeugte Plots
-
-checkpoints/   → gespeicherte Model-Checkpoints
+BachelorarbeitHumanoid/
+│
+├── README.md
+├── main.py
+├── env.py
+├── ppo.py
+├── mlp.py
+├── utils.py
+├── requirements.txt
+│
+└── Kurzesvideo.gif

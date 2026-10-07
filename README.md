@@ -85,18 +85,3 @@ The project gave me practical experience with:
 - Training and evaluating neural networks
 - Understanding the impact of computational resources on machine learning experiments
 
----
-
-## Project Structure
-
-```text
-BachelorarbeitHumanoid/
-├── README.md
-├── main.py
-├── env.py
-├── ppo.py
-├── mlp.py
-├── utils.py
-├── requirements.txt
-│
-└── Kurzesvideo.gif
